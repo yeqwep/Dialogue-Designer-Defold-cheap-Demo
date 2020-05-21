@@ -1,0 +1,18 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 1280
+height = 720
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = DDD
+custom_resources = assets/res
+dependencies = https://github.com/d954mas/defold-utf8/archive/master.zip
+

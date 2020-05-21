@@ -1,0 +1,85 @@
+local lang = "ENG"
+
+local showed = false
+local selected = 0
+
+local pos = vmath.vector3()
+
+-- ボタン設定 -----------------------------------------------------------------------------
+local s_button = require "button.button"
+local b1= nil
+local b2 = nil
+local b3 = nil
+
+local function create_button(node, callback)
+	return s_button.create(node, callback)
+end
+
+local function b_r(button)
+	msg.post("/gui#dialogue", "selected", {s = selected})
+	msg.post("#", "hide")
+
+end
+
+
+local function init_button()
+	b1 = create_button(gui.get_node("1"), function()
+		selected = 1
+		b_r(button)
+	end)
+	b2 = create_button(gui.get_node("2"), function()
+		selected = 2
+		b_r(button)
+	end)
+	b3 = create_button(gui.get_node("3"), function()
+		selected = 3
+		b_r(button)
+	end)
+end
+------------------------------------------------------------------------------------------
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	gui.set_render_order(15)
+
+	msg.post("#", "hide")
+	showed = false
+	selected = 0
+
+	init_button()
+end
+
+function on_input(self, action_id, action)
+	if showed then
+		b1.on_input(action_id, action)
+		b2.on_input(action_id, action)
+		b3.on_input(action_id, action)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show") then
+		local b_num = 0
+		for _, s_data in ipairs(message) do
+			b_num = b_num + 1
+			local b_nodes = gui.get_node(string.format("%s", b_num))
+			local l_nodes = gui.get_node(string.format("label%s", b_num))
+			gui.set_text(l_nodes, s_data["text"][lang])
+			gui.set_enabled(b_nodes, true)
+			pos.x = 0
+			pos.y = b_num * -150 + 630
+			gui.set_position(b_nodes,pos)
+		end
+		gui.set_enabled(gui.get_node("select"), true)
+		showed = true
+	elseif message_id == hash("hide") then
+		showed = false
+		gui.set_enabled(gui.get_node("select"), false)
+		for i = 1, 3, 1 do
+			local e = gui.get_node(string.format("%s", i))
+			gui.set_enabled(e, false)
+			pos.x = -10000
+			gui.set_position(e,pos)
+		end
+	end
+end

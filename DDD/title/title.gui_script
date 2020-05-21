@@ -1,0 +1,30 @@
+
+-- ボタン用初期設定 -----------------------------------------------------------------------------
+local s_button = require "button.button"
+local start_button = nil
+
+local function create_button(node, callback)
+	return s_button.create(node, callback)
+end
+
+-- ボタン初期設定
+local function setup_button(self)
+	start_button = create_button(gui.get_node("button"), function()
+		msg.post("main:/handler", "showdialogue")
+	end)
+end
+------------------------------------------------------------------------------------------
+
+function init(self)
+	-- 入力
+	msg.post(".", "acquire_input_focus")
+	-- ボタン準備
+	setup_button(self)
+	-- BGM設定
+	-- msg.post('main:/*12BGM', 'stop_sound')
+	-- msg.post('main:/*12BGM#tw008', 'play_sound', {gain = data.musicvol})
+end
+
+function on_input(self, action_id, action)
+	start_button.on_input(action_id, action)
+end
